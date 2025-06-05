@@ -1,10 +1,6 @@
 import React from "react";
 
-type Props = {
-    params: { id: string };
-};
-
-const StoryPage = ({ params }: Props) => {
+const StoryPage = ({ params }: { params: { id: string } }) => {
     const { id } = params;
     // TODO: Fetch story details using the id
     return (
