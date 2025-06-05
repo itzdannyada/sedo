@@ -10,7 +10,7 @@ interface StoryFormProps {
 const initialState: Omit<Story, '_id' | 'createdAt' | 'updatedAt'> = {
     title: '',
     description: '',
-    status: 'todo',
+    status: 'To Do',
     assignedUser: '',
 };
 
@@ -80,7 +80,7 @@ const StoryForm: React.FC<StoryFormProps> = ({users}) => {
                     onChange={handleChange}
                     className="w-full mt-1 p-2 rounded bg-gray-700 text-white"
                 >
-                    <option value="todo">To Do</option>
+                    <option value="To Do">To Do</option>
                     <option value="in-progress">In Progress</option>
                 </select>
             </label>
