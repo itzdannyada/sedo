@@ -1,24 +1,27 @@
  
 import { getServerSession } from "next-auth";
-import { authOptions } from "./utils/auth";
-import UnauthorisedModal from "./components/ui/unauthorised"; 
+import { authOptions } from "./utils/auth"; 
+import UserStoryDisplay from "./components/story/userStoryDisplay";
+import clientPromise from "./utils/mongo";
+import { Story } from "./types";  
+import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return( 
-      <UnauthorisedModal 
-        message={"You must be logged in to view this page."}
-        showLoginButton={true} 
-      />
-    )
-  }
-  
-  return (
-    <div > 
-         {/* User info */}
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        redirect("/auth");
+    }
 
-         {/* some charts showing productivity by story etc */}
-    </div>
-  );
+    const client = await clientPromise;
+    const db = client.db("sedo"); 
+    const stories = await db.collection<Story>("stories").find({
+        assignedUser: session.user._id,
+        status: { $in: ["todo", "in-progress"] }
+    }).toArray(); 
+
+    return (
+        <div >
+            <UserStoryDisplay stories={stories}/>
+        </div>
+    );
 }

@@ -4,12 +4,14 @@ import React from 'react';
 
 interface UnauthorisedModalProps {
     message?: string;  
+    showBackButton?: boolean;
     showLoginButton?: boolean; 
 }
 
 const UnauthorisedModal: React.FC<UnauthorisedModalProps> = ({
     message = "You are not authorised to view this page.",  
-    showLoginButton = false, 
+    showLoginButton = false,
+    showBackButton = false, 
 }) => { 
     const router = useRouter();
     return (
@@ -30,6 +32,15 @@ const UnauthorisedModal: React.FC<UnauthorisedModalProps> = ({
                             type="button"
                         >
                             Log In
+                        </button>
+                    )} 
+                    {showBackButton && (
+                        <button
+                            className="px-4 py-2 rounded bg-cyan-500 text-white hover:bg-cyan-600"
+                            onClick={()=>{router.back()}}
+                            type="button"
+                        >
+                            Back
                         </button>
                     )} 
                 </div>

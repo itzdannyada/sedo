@@ -55,7 +55,7 @@ export default function AuthForm() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center space-y-6 bg-gray-800 p-8 rounded-xl shadow-lg shadow-cyan-500 w-auto m-4"> 
+        <div className="flex text-white flex-col items-center justify-center space-y-6 bg-gray-800 p-8 rounded-xl shadow-lg shadow-cyan-500 w-auto m-4"> 
             <div className="relative flex w-64 rounded-full p-1">
                 <button
                     type="button"
