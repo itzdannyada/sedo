@@ -1,8 +1,7 @@
 "use client"   
 import React, { useState } from "react"; 
 import { Session } from "next-auth";  
-import { FaSignOutAlt , FaSignInAlt } from "react-icons/fa"; 
-import { usePathname } from "next/navigation";
+import { FaSignOutAlt , FaSignInAlt } from "react-icons/fa";
 import { signOut, useSession } from "next-auth/react"; 
 import ConfirmationModal from "./confirmation";
 import { MdOutlineTimer } from "react-icons/md";
@@ -14,12 +13,8 @@ interface NavProps{
 }
 
 const Nav: React.FC<NavProps> = ({}) => {  
-    const {data: session} = useSession();
-    const pathname = usePathname();
-    const [showConfirm, setShowConfirm] = useState(false);
-    
-    // Prevent rendering the nav on the auth page
-    if (pathname === "/auth") {return null}; 
+    const {data: session} = useSession(); 
+    const [showConfirm, setShowConfirm] = useState(false); 
 
     const handleSignOut = async () => {
         setShowConfirm(true);

@@ -29,20 +29,17 @@ const UserStoryDisplay: React.FC<UserStoryDisplayProps> = ({ stories }) => {
             <h2 className="text-xl font-bold mb-4">Your Active User Stories</h2>
             <div className="flex flex-col gap-2">
                 {stories.map((story, idx) => (
-                <div key={String(story._id)} className="border-b border-cyan-900 last:border-none">
+                <div key={String(story._id)} className="">
                     <button
-                    className="w-full text-left py-4 px-2 gap-2 text-cyan-300 text-lg font-semibold focus:outline-none flex justify-between items-center transition-colors hover:bg-gray-700"
+                    className={`w-full text-left py-4 px-2 gap-2 text-cyan-300 text-lg font-semibold focus:outline-none flex justify-between items-center transition-colors hover:bg-gray-700 ${openIndex === idx ? "rounded-t-xl bg-gray-700" : "rounded-xl"}`}
                     onClick={() => handleToggle(idx)}
                     aria-expanded={openIndex === idx}
                     >
-                        <div className='flex items-center gap-4'>
-                            <span >{story.title}</span>
-                            <span className='ml-2'>Status: {story.status}</span>
-                        </div>
+                        <span >{story.title}</span> 
                         <span className="ml-2 text-cyan-400">{openIndex === idx ? '▲' : '▼'}</span>
                     </button>
                     {openIndex === idx && (
-                    <div className="px-2 pb-4 flex flex-col gap-2 animate-fade-in">
+                    <div className="p-2 flex flex-col gap-2 animate-fade-in bg-gray-700 rounded-b-xl">
                         <p className="text-gray-300">{story.description}</p>
                         <div className="flex justify-between items-center mt-2">
                         <span className="text-sm text-gray-400">

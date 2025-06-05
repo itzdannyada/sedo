@@ -10,7 +10,7 @@ export default async function AuthPage() {
     }
 
     return (
-        <div className="h-full flex items-center justify-center">  
+        <div className="flex min-h-[80vh] w-full items-center justify-center">  
             <AuthForm />  
         </div>
     );
