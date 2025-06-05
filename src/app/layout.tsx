@@ -23,7 +23,7 @@ export default async function RootLayout({
         <SessionProvider session={session}> 
 
           <Nav session={session}/>
-          <main className="flex w-full h-screen bg-black">
+          <main className="flex w-full h-screen bg-gray-200">
             <div className="flex-1 overflow-y-auto">
               {children}  
               <Toaster 

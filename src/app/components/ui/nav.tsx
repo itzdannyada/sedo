@@ -6,6 +6,7 @@ import { FaSignOutAlt , FaSignInAlt } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react"; 
 import ConfirmationModal from "./confirmation";
+import { MdOutlineTimer } from "react-icons/md";
 
 interface NavProps{ 
     session: Session | null;
@@ -34,14 +35,14 @@ const Nav: React.FC<NavProps> = ({}) => {
  
     return (
         <>
-        <div className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-transparent border-b border-white/20 text-white shadow-sm shadow-cyan-500">
+        <div className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-transparent border-b border-white/20 text-black shadow-sm shadow-cyan-500">
             <div className="w-[95%] mx-auto p-2 my-auto flex flex-row items-center justify-between">
             <div className="text-xl font-bold">
                 <a
                     href={"/"}
                     className="flex items-center gap-1"
                     >
-                <Image src="/vercel.svg" alt="Logo" width={50} height={50} className="inline-block mr-2" /> 
+                    <MdOutlineTimer className="w-8 h-8 my-2"/>
                 </a>
             </div>
             <ul className="flex gap-4 text-base font-medium text-md">

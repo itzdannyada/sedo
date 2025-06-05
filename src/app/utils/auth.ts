@@ -1,21 +1,21 @@
 import { DefaultSession, type NextAuthOptions } from "next-auth";  
-import { DefaultJWT, JWT } from "next-auth/jwt";  
-import { v4 } from 'uuid'; 
+import { DefaultJWT, JWT } from "next-auth/jwt";
 import clientPromise from "./mongo";  
 import Credentials from "next-auth/providers/credentials";
 import { User } from "../types";
 import bcrypt from "bcryptjs";
+import { ObjectId } from "mongodb";
 
   declare module "next-auth" {
     interface User {
-      id: string|undefined;  
+      _id?: string|undefined;  
       email: string;
       password?: string;
     }
   
     interface Session {
       user: {
-        id: string|undefined;  
+        _id: string|ObjectId;  
         email: string; 
       } & DefaultSession['user'];
     }
@@ -24,7 +24,7 @@ import bcrypt from "bcryptjs";
   declare module "next-auth/jwt" {
     interface JWT {
       user: {
-        id: string|undefined; 
+        _id: string|undefined; 
         username: string | null;
         email: string; 
       } & DefaultJWT;
@@ -90,14 +90,14 @@ export const authOptions: NextAuthOptions = {
             if (!isValid) throw new Error("Passwords do not match");
 
             return {
-                id: user.id ?? "",
+                id: user._id.toString(), // Convert ObjectId to string
                 email: user.email,
             };
         } else {
             // Register a new user with hashed password
             const passwordHash = await bcrypt.hash(credentials.password, 10);
             const newUser: User = {
-                id: v4(),
+                _id: new ObjectId(), // Use a unique identifier, e.g., timestamp
                 email: credentials.email ?? "",
                 passwordHash,
             };
@@ -105,7 +105,7 @@ export const authOptions: NextAuthOptions = {
             await db.collection<User>("users").insertOne(newUser);
 
             return {
-                id: newUser.id,
+                id: newUser._id.toString(),
                 email: newUser.email ?? "",
             };
         }
@@ -124,7 +124,7 @@ export const authOptions: NextAuthOptions = {
 
             if (user) {
                 customToken.user = {
-                    id: user.id ?? "", 
+                    _id: user.id ?? "", 
                     email: user.email,
                     username:null
                 };
@@ -142,7 +142,7 @@ export const authOptions: NextAuthOptions = {
 
             session.user = {
                 ...session.user,
-                id: customToken.user.id,  
+                _id: customToken.user.id as string | ObjectId, // Ensure _id is a string or ObjectId
                 email: customToken.user.email as string
             }; 
 
