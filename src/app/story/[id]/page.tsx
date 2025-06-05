@@ -1,10 +1,10 @@
 import React from "react";
 
-interface PageProps {
+type Props = {
     params: { id: string };
-}
+};
 
-const StoryPage: React.FC<PageProps> = ({ params }) => {
+const StoryPage = ({ params }: Props) => {
     const { id } = params;
     // TODO: Fetch story details using the id
     return (
