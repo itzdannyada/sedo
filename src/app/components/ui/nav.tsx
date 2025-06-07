@@ -49,7 +49,7 @@ const Nav: React.FC<NavProps> = ({}) => {
                     </span>
                     </a>
                 </li>
-                <li >
+                {session?.user.isAdmin&&(<li >
                     <a
                     href={"/admin"}
                     className="hover:text-cyan-500 transition-colors flex items-center gap-1"
@@ -60,7 +60,7 @@ const Nav: React.FC<NavProps> = ({}) => {
                         Admin
                     </span>
                     </a>
-                </li>
+                </li>)}
                 {!session?(<li >
                     <a
                     href={"/auth"}

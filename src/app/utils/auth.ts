@@ -2,7 +2,7 @@ import { DefaultSession, type NextAuthOptions } from "next-auth";
 import { DefaultJWT, JWT } from "next-auth/jwt";
 import clientPromise from "./mongo";  
 import Credentials from "next-auth/providers/credentials";
-import { User } from "../types";
+import { Admin, User } from "../types";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
 
@@ -17,6 +17,7 @@ import { ObjectId } from "mongodb";
       user: {
         _id: string|ObjectId;  
         email: string; 
+        isAdmin?: boolean;
       } & DefaultSession['user'];
     }
   }
@@ -27,6 +28,7 @@ import { ObjectId } from "mongodb";
         _id: string|undefined; 
         username: string | null;
         email: string; 
+        isAdmin?: boolean;
       } & DefaultJWT;
     }
   }
@@ -34,26 +36,6 @@ import { ObjectId } from "mongodb";
   
 export const authOptions: NextAuthOptions = {
     providers: [
-        // Twitter({
-        //     clientId: String(process.env.TWITTER_ID) ?? "",
-        //     clientSecret: String(process.env.TWITTER_SECRET) ?? "",
-        //     version: "2.0",
-        // }),
-        // DiscordProvider({
-        //     clientId: String(process.env.AUTH_DISCORD_ID) ?? "",
-        //     clientSecret: String(process.env.AUTH_DISCORD_SECRET) ?? "",
-        // }),
-        // GoogleProvider({
-        //     clientId: String(process.env.GOOGLE_CLIENT_ID) ?? "",
-        //     clientSecret: String(process.env.GOOGLE_CLIENT_SECRET) ?? "",
-        //     authorization: {
-        //         params: {
-        //             prompt: "consent",
-        //             access_type: "offline",
-        //             response_type: "code",
-        //         },
-        //     },
-        // }),
         Credentials({
             name: "Credentials",
             credentials: {
@@ -75,7 +57,7 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(
         credentials: Record<"email" | "password", string> | undefined
-    ): Promise<{ id: string; email: string } | null> {
+    ): Promise<{ id: string; email: string,} | null> {
         console.log("[AUTH] Starting authorize with credentials:", credentials);
         if (!credentials) return null;
 
@@ -85,17 +67,15 @@ export const authOptions: NextAuthOptions = {
 
         // Find user by email or username
         const user = await db.collection<User>('users').findOne({ email: credentials.email });
-
         if (user) {
             // Compare password with hash
             console.log("[AUTH] User found?", !!user);
             const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
             console.log("[AUTH] Password valid?", isValid);
-            if (!isValid) throw new Error("Passwords do not match");
-
+            if (!isValid) throw new Error("Passwords do not match"); 
             return {
                 id: user._id.toString(), // Convert ObjectId to string
-                email: user.email,
+                email: user.email, 
             };
         } else {
             console.log("[AUTH] Registering new user:", credentials.email);
@@ -130,16 +110,31 @@ export const authOptions: NextAuthOptions = {
 
             if (user) {
                 console.log("[JWT CALLBACK] User present?", !!user, "User:", user);
+
+                const client = await clientPromise;
+                const db = client.db("sedo");
+
+                // Check if user is an admin
+                const adminRecord = await db.collection<Admin>("admins").findOne({ userId: user.id });
+                console.log("[JWT CALLBACK] Admin record found?", !!adminRecord, "Admin:", adminRecord);
+                const isAdmin = !!adminRecord;
+
                 customToken.user = {
-                    _id: user.id ?? "", 
-                    email: user.email,
-                    username:null
+                _id: user.id ?? "",
+                email: user.email,
+                username: null,
+                isAdmin: isAdmin,  // <--- Add isAdmin flag
                 };
+
+                console.log("[JWT CALLBACK] isAdmin?", isAdmin);
             }
 
             // Handle session update
             if (trigger === "update" && session?.user) {
-                console.log("[JWT CALLBACK] Session update triggered. Session user:", session?.user);
+                console.log(
+                "[JWT CALLBACK] Session update triggered. Session user:",
+                session?.user
+                );
                 customToken.user = { ...customToken.user, ...session.user };
             }
 
@@ -150,8 +145,9 @@ export const authOptions: NextAuthOptions = {
 
             session.user = {
                 ...session.user,
-                _id: customToken.user._id as string | ObjectId,
-                email: customToken.user.email as string
+                _id: customToken.user._id as string,
+                email: customToken.user.email as string,
+                isAdmin: customToken.user.isAdmin,
             }; 
             console.log("[SESSION CALLBACK] Returning session for user:", session.user);
 
