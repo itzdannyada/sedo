@@ -11,6 +11,11 @@ const maxRequests = 5;
 const ipMap = new Map<string, { count: number; firstRequest: number }>();
 
 export async function middleware(request: NextRequest) {
+
+    if (process.env.NODE_ENV !== "production") {
+        return NextResponse.next();
+    }
+
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     request.headers.get('x-real-ip') ||
     'unknown';    
