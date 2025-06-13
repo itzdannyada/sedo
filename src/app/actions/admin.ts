@@ -4,11 +4,13 @@ import { Story } from "../types";
 export async function createStory(story: Omit<Story, '_id' | 'createdAt' | 'updatedAt'>) {
     const authOptions = await import("../utils/auth").then(m => m.authOptions);
     const session = await import("next-auth").then(m => m.getServerSession(authOptions));
+    
     if (!session) {
         throw new Error("You must be logged in to create a story.");
-    }
-    if (!session.user || !session.user._id) {
+    } else if (!session.user || !session.user._id) {
         throw new Error("Invalid user session.");
+    } else if (session.user.isAdmin !== true) {
+        throw new Error("You must be an admin to create a story.");
     }
 
     const client = await import("../utils/mongo").then(m => m.default);

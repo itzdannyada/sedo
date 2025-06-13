@@ -85,6 +85,20 @@ export const authOptions: NextAuthOptions = {
                 _id: new ObjectId(), // Use a unique identifier, e.g., timestamp
                 email: credentials.email ?? "",
                 passwordHash,
+                permissions: {
+                    story: {
+                        create: false,
+                        read: true,
+                        update: false,
+                        delete: false,
+                    },
+                    timeLog: {
+                        create: false,
+                        read: true,
+                        update: false,
+                        delete: false,
+                    },
+                },
             };
 
             await db.collection<User>("users").insertOne(newUser);

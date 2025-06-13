@@ -28,6 +28,21 @@ export default function AuthForm() {
 
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            toast.error("Invalid email address.");
+            setLoading(false);
+            return;
+        }
+
+        // Password validation (min 8 chars, 1 letter, 1 number)
+        if (password.length < 8 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+            toast.error("Password must be at least 8 characters and include letters and numbers.");
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
             if (rememberMe) {
@@ -126,7 +141,6 @@ export default function AuthForm() {
                                     className="peer appearance-none h-5 w-5 border border-gray-400 rounded bg-transparent checked:bg-cyan-500 checked:border-cyan-500 transition-colors duration-200"
                                 />
                                 <span className="pointer-events-none absolute w-5 h-5 flex items-center justify-center">
-                                    {/* Checkmark SVG, only visible when checked */}
                                     {rememberMe && (
                                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

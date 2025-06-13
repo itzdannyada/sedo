@@ -1,7 +1,7 @@
 "use client"   
 import React, { useState } from "react"; 
 import { Session } from "next-auth";  
-import { FaSignOutAlt , FaSignInAlt } from "react-icons/fa";
+import { FaSignOutAlt , FaSignInAlt, FaUser } from "react-icons/fa";
 import { signOut, useSession } from "next-auth/react"; 
 import ConfirmationModal from "./confirmation";
 import { MdOutlineTimer } from "react-icons/md";
@@ -46,6 +46,18 @@ const Nav: React.FC<NavProps> = ({}) => {
                     <span className="hidden md:inline-flex items-center gap-1">
                         <FaHouseChimney   className="w-6 h-6" />
                         Home
+                    </span>
+                    </a>
+                </li>
+                <li >
+                    <a
+                    href={"/dashboard"}
+                    className="hover:text-cyan-500 transition-colors flex items-center gap-1"
+                    >
+                    <span className="md:hidden"><FaHouseChimney   className="w-6 h-6" /></span>
+                    <span className="hidden md:inline-flex items-center gap-1">
+                        <FaUser className="w-6 h-6" />
+                        Dashboard
                     </span>
                     </a>
                 </li>
